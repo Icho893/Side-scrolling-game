@@ -1,8 +1,9 @@
 // select game screens
-let gameStart = document.querySelector('.game-start');
-let gameOver = document.querySelector('.game-over');
-let gameArea = document.querySelector('.game-area');
-let gameScore = document.querySelector('.game-score');
+const gameStart = document.querySelector('.game-start');
+const gameOver = document.querySelector('.game-over');
+const gameArea = document.querySelector('.game-area');
+const gameScore = document.querySelector('.game-score');
+let gamePoints = gameScore.querySelector('.points')
 
 // game start listener
 gameStart.addEventListener('click', onGameStart);
@@ -38,6 +39,9 @@ let game = {
     speed: 2,
     movingMultiplier: 4
 };
+let scene = {
+    score: 0
+}
 
 //key handlers
 function onKeyDown(e) {
@@ -58,6 +62,8 @@ function gameAction() {
     if(isInAir){
         player.y += game.speed;
     }
+    //increment points
+        scene.score++;
 
     //register user input
     if (keys.ArrowUp && player.y > 0) {
@@ -75,6 +81,9 @@ function gameAction() {
     //apply movement
     wizard.style.top = player.y + 'px';
     wizard.style.left = player.x + 'px';
+
+    //apply score
+    gameScore.textContent = scene.score;
 
     window.requestAnimationFrame(gameAction);
 }
