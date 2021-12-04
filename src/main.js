@@ -40,10 +40,12 @@ let game = {
     speed: 2,
     movingMultiplier: 4,
     fireballMultiplier: 5,
-    fireInterval: 1000
+    fireInterval: 1000,
+    cloudSpawnInterval: 3000
 };
 let scene = {
-    score: 0
+    score: 0,
+    lastCloudSpawn: 0
 };
 
 //key handlers
@@ -81,6 +83,30 @@ function gameAction(timestamp) {
     //increment points
     scene.score++;
 
+    //Add clouds
+    if(timestamp - scene.lastCloudSpawn > game.cloudSpawnInterval + 20000 * Math.random()){
+        let cloud = document.createElement('div');
+        cloud.classList.add('cloud');
+        cloud.x = gameArea.offsetWidth - 200;
+        cloud.style.left = cloud.x + 'px';
+        cloud.style.top = (gameArea.offsetHeight - 200) * Math.random() + 'px';
+        gameArea.appendChild(cloud);
+        scene.lastCloudSpawn = timestamp;
+    }
+   
+
+    //Modify cloud position
+    let clouds = document.querySelectorAll('.cloud');
+    clouds.forEach(cloud => {
+        cloud.x -= game.speed;
+        cloud.style.left = cloud.x + 'px';
+        
+        if(cloud.x + cloud.offsetWidth <= 0){
+            cloud.parentElement.removeChild(cloud)
+        }
+    });
+
+
     //register user input
     if (keys.ArrowUp && player.y > 0) {
         player.y -= game.speed * game.movingMultiplier;
@@ -106,8 +132,8 @@ function gameAction(timestamp) {
     fireBalls.forEach(fireBall => {
         fireBall.x += game.speed * game.fireballMultiplier;
         fireBall.style.left = fireBall.x + 'px';
-        if(fireBall.x + fireBall.offsetWidth > gameArea.offsetWidth){
-           fireBall.parentElement.removeChild(fireBall);
+        if (fireBall.x + fireBall.offsetWidth > gameArea.offsetWidth) {
+            fireBall.parentElement.removeChild(fireBall);
         }
     });
     //apply movement
